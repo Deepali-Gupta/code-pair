@@ -3,7 +3,14 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import editManager from './editManager'
-
+// import masterController from './masterController'
+import {SessionVariables} from './Constants'
+ var rinfo : any;
+    var server : any;
+    var client : any;
+    let em :editManager= new editManager();
+    var PORT = 33333;
+    var HOST = '127.0.0.1';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -11,13 +18,9 @@ export function activate(context: vscode.ExtensionContext) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "codepair" is now active!');
-    var rinfo : any;
-    var server : any;
-    var client : any;
-    let em :editManager= new editManager();
-    var PORT = 33333;
-    var HOST = '127.0.0.1';
-
+   
+    let _editManager = new editManager();
+    let _masterController = new masterController(_editManager);
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
@@ -48,6 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
             em.setText(message+"");
         });
          server.bind(PORT, HOST); 
+         SessionVariables.I_AM_SERVER = true;
         
         
         // Display a message box to the user
@@ -105,4 +109,60 @@ export function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {
+}
+class masterController {
+
+    private _editManager: editManager;
+    private _disposable: vscode.Disposable;
+
+    constructor(editManager: editManager) {
+        this._editManager = editManager;
+        // this._wordCounter.updateWordCount();
+
+        // subscribe to selection change and editor activation events
+        let subscriptions: vscode.Disposable[] = [];
+        vscode.window.onDidChangeTextEditorSelection(this._onEvent, this, subscriptions);
+        // vscode.window.onDidChangeActiveTextEditor(this._onEvent, this, subscriptions);
+
+        // update the counter for the current file
+        // this._editManager.updateWordCount();
+
+        // create a combined disposable from both event subscriptions
+        this._disposable = vscode.Disposable.from(...subscriptions);
+    }
+
+    dispose() {
+        this._disposable.dispose();
+    }
+
+    private _onEvent() {
+        console.log("Key Presses");
+        //Remember to set it true during initailization
+        if(SessionVariables.I_AM_SERVER){
+            //TODO
+             let ack:string=em.getText();
+       console.log(rinfo.port);
+        server.send(ack, 0, ack.length, rinfo.port, rinfo.address, function(err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to ' + rinfo.address +':'+ rinfo.port);
+            //client.close();
+        });  
+       
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Sending from server!');
+
+        }
+        else{
+            //TODO
+            var message = em.getText();
+        client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to ' + HOST +':'+ PORT);
+            //client.close();
+        });
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Send from Client');
+            
+        }
+    }
 }

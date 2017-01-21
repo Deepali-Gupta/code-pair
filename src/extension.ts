@@ -19,10 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
         // The code you place here will be executed every time your command is executed
        
         // Display a message box to the user
-        // vscode.window.showInformationMessage('Hello World!')
-        let em: editManager = new editManager();
-        console.log(em.getText());
-        em.setText("Om");
+        vscode.window.showInformationMessage('Hello World!');
+       
     });
     let disposableSend = vscode.commands.registerCommand('extension.send', () => {
         // The code you place here will be executed every time your command is executed
@@ -41,12 +39,17 @@ export function activate(context: vscode.ExtensionContext) {
        
         // Display a message box to the user
         vscode.window.showInformationMessage('Get Text');
+        let em: editManager = new editManager();
+        console.log(em.getText());
+        
     });
     let disposableSet = vscode.commands.registerCommand('extension.set', () => {
         // The code you place here will be executed every time your command is executed
        
         // Display a message box to the user
         vscode.window.showInformationMessage('Set Text');
+        let em: editManager = new editManager();
+        em.setText("Om");
     });
     context.subscriptions.push(disposable);
     context.subscriptions.push(disposableSend);

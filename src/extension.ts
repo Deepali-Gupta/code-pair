@@ -16,12 +16,39 @@ export function activate(context: vscode.ExtensionContext) {
     // The commandId parameter must match the command field in package.json
     let disposable = vscode.commands.registerCommand('extension.sayHello', () => {
         // The code you place here will be executed every time your command is executed
-
+       
         // Display a message box to the user
         vscode.window.showInformationMessage('Hello World!');
     });
-
+    let disposableSend = vscode.commands.registerCommand('extension.send', () => {
+        // The code you place here will be executed every time your command is executed
+       
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Sending to Client!');
+    });
+    let disposableReceive = vscode.commands.registerCommand('extension.receive', () => {
+        // The code you place here will be executed every time your command is executed
+       
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Receiving from Server');
+    });
+    let disposableGet = vscode.commands.registerCommand('extension.get', () => {
+        // The code you place here will be executed every time your command is executed
+       
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Get Text');
+    });
+    let disposableSet = vscode.commands.registerCommand('extension.set', () => {
+        // The code you place here will be executed every time your command is executed
+       
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Set Text');
+    });
     context.subscriptions.push(disposable);
+    context.subscriptions.push(disposableSend);
+    context.subscriptions.push(disposableReceive);
+    context.subscriptions.push(disposableGet);
+    context.subscriptions.push(disposableSet);
 }
 
 // this method is called when your extension is deactivated

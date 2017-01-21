@@ -19,17 +19,17 @@
             "command": "extension.sayHello",
             "title": "Hello World"
         },
-        {   "command": "extension.send",
-            "title": "Connect to Client"
+        {   "command": "extension.client",
+            "title": "Load Client"
         },
-        {   "command": "extension.receive",
-            "title": "Connect to Server"
+        {   "command": "extension.server",
+            "title": "Load Server"
         },
-        {   "command": "extension.get",
-            "title": "Get Text"
+        {   "command": "extension.serversend",
+            "title": "Send from server"
         },
-        {   "command": "extension.set",
-            "title": "Set Text"
+        {   "command": "extension.clientsend",
+            "title": "Send from client"
         }]
     },
     "scripts": {

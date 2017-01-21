@@ -11,6 +11,12 @@ export function activate(context: vscode.ExtensionContext) {
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "codepair" is now active!');
+    var rinfo : any;
+    var server : any;
+    var client : any;
+    let em :editManager= new editManager();
+    var PORT = 33333;
+    var HOST = '127.0.0.1';
 
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
@@ -22,13 +28,13 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage('Hello World!');
        
     });
-    let disposableSend = vscode.commands.registerCommand('extension.send', () => {
+    let disposableServer = vscode.commands.registerCommand('extension.server', () => {
         // The code you place here will be executed every time your command is executed
        var PORT = 33333;
-        var HOST = '10.194.50.173';
+       var HOST = '127.0.0.1';
 
         var dgram = require('dgram');
-        var server = dgram.createSocket('udp4');
+        server = dgram.createSocket('udp4');
 
         server.on('listening', function () {
             var address = server.address();
@@ -37,55 +43,64 @@ export function activate(context: vscode.ExtensionContext) {
 
         server.on('message', function (message: string, remote) {
             console.log(remote.address + ':' + remote.port +' - ' + message);
-            let em: editManager = new editManager();
-            let test:string = "bah blah";
-            em.setText(message+ "");
+            rinfo = remote;
+            console.log(rinfo.port+' '+rinfo.address);
+            em.setText(message+"");
         });
-
-        server.bind(PORT, HOST);
+         server.bind(PORT, HOST); 
+        
+        
         // Display a message box to the user
-        vscode.window.showInformationMessage('Sending to Client!');
+        vscode.window.showInformationMessage('Server on!');
     });
-    let disposableReceive = vscode.commands.registerCommand('extension.receive', () => {
+    let disposableServerSend = vscode.commands.registerCommand('extension.serversend', () => {
         // The code you place here will be executed every time your command is executed
-        var PORT = 33333;
-        var HOST = '127.0.0.1';
-
+       let ack:string=em.getText();
+       console.log(rinfo.port);
+        server.send(ack, 0, ack.length, rinfo.port, rinfo.address, function(err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to ' + rinfo.address +':'+ rinfo.port);
+            //client.close();
+        });  
+       
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Sending from server!');
+       
+    });
+    let disposableClient = vscode.commands.registerCommand('extension.client', () => {
+        // The code you place here will be executed every time your command is executed
+        
         var dgram = require('dgram');
-        let em: editManager = new editManager();
+        
+        client = dgram.createSocket('udp4');
+        
+        client.on('message', function (message: string, remote) {
+            console.log(remote.address + ':' + remote.port +' - ' + message);
+            rinfo = remote;
+            let em: editManager = new editManager();
+            em.setText(message+"");
+        });
+      
+        // Display a message box to the user
+        vscode.window.showInformationMessage('Client On!');
+    });
+    let disposableClientSend = vscode.commands.registerCommand('extension.clientsend', () => {
+        // The code you place here will be executed every time your command is executed
         var message = em.getText();
-
-        var client = dgram.createSocket('udp4');
         client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
             if (err) throw err;
             console.log('UDP message sent to ' + HOST +':'+ PORT);
-            client.close();
+            //client.close();
         });
         // Display a message box to the user
-        vscode.window.showInformationMessage('Receiving from Server');
-    });
-    let disposableGet = vscode.commands.registerCommand('extension.get', () => {
-        // The code you place here will be executed every time your command is executed
+        vscode.window.showInformationMessage('Send from Client');
        
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Get Text');
-        let em: editManager = new editManager();
-        console.log(em.getText());
-        
-    });
-    let disposableSet = vscode.commands.registerCommand('extension.set', () => {
-        // The code you place here will be executed every time your command is executed
-       
-        // Display a message box to the user
-        vscode.window.showInformationMessage('Set Text');
-        let em: editManager = new editManager();
-        em.setText("Om");
     });
     context.subscriptions.push(disposable);
-    context.subscriptions.push(disposableSend);
-    context.subscriptions.push(disposableReceive);
-    context.subscriptions.push(disposableGet);
-    context.subscriptions.push(disposableSet);
+    context.subscriptions.push(disposableServer);
+    context.subscriptions.push(disposableClient);
+    context.subscriptions.push(disposableServerSend);
+    context.subscriptions.push(disposableClientSend);
 }
 
 // this method is called when your extension is deactivated

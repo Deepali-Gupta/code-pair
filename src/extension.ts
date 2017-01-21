@@ -27,12 +27,41 @@ export function activate(context: vscode.ExtensionContext) {
        
         // Display a message box to the user
         vscode.window.showInformationMessage('Sending to Client!');
+        var PORT = 33333;
+        var HOST = '127.0.0.1';
+
+        var dgram = require('dgram');
+        var server = dgram.createSocket('udp4');
+
+        server.on('listening', function () {
+            var address = server.address();
+            console.log('UDP Server listening on ' + address.address + ":" + address.port);
+        });
+
+        server.on('message', function (message, remote) {
+            console.log(remote.address + ':' + remote.port +' - ' + message);
+
+        });
+
+        server.bind(PORT, HOST);
     });
     let disposableReceive = vscode.commands.registerCommand('extension.receive', () => {
         // The code you place here will be executed every time your command is executed
        
         // Display a message box to the user
         vscode.window.showInformationMessage('Receiving from Server');
+        var PORT = 33333;
+        var HOST = '127.0.0.1';
+
+        var dgram = require('dgram');
+        var message = new Buffer('My KungFu is Good!');
+
+        var client = dgram.createSocket('udp4');
+        client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
+            if (err) throw err;
+            console.log('UDP message sent to ' + HOST +':'+ PORT);
+            client.close();
+        });
     });
     let disposableGet = vscode.commands.registerCommand('extension.get', () => {
         // The code you place here will be executed every time your command is executed

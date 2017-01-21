@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
     let disposableSend = vscode.commands.registerCommand('extension.send', () => {
         // The code you place here will be executed every time your command is executed
        var PORT = 33333;
-        var HOST = '127.0.0.1';
+        var HOST = '10.194.50.173';
 
         var dgram = require('dgram');
         var server = dgram.createSocket('udp4');
@@ -35,10 +35,11 @@ export function activate(context: vscode.ExtensionContext) {
             console.log('UDP Server listening on ' + address.address + ":" + address.port);
         });
 
-        server.on('message', function (message, remote) {
+        server.on('message', function (message: string, remote) {
             console.log(remote.address + ':' + remote.port +' - ' + message);
             let em: editManager = new editManager();
-            em.setText(message);
+            let test:string = "bah blah";
+            em.setText(message+ "");
         });
 
         server.bind(PORT, HOST);

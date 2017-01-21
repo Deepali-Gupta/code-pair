@@ -37,7 +37,8 @@ export function activate(context: vscode.ExtensionContext) {
 
         server.on('message', function (message, remote) {
             console.log(remote.address + ':' + remote.port +' - ' + message);
-
+            let em: editManager = new editManager();
+            em.setText(message);
         });
 
         server.bind(PORT, HOST);
@@ -50,7 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
         var HOST = '127.0.0.1';
 
         var dgram = require('dgram');
-        var message = new Buffer('My KungFu is Good!');
+        let em: editManager = new editManager();
+        var message = em.getText();
 
         var client = dgram.createSocket('udp4');
         client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {

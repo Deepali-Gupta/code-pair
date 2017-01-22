@@ -116,6 +116,26 @@ export function activate(context: vscode.ExtensionContext) {
 // this method is called when your extension is deactivated
 export function deactivate() {
 }
+let trailingSpacesDecorationType = vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(255,0,0,0.3)"
+});
+
+function updateDecorations() {
+
+    const doc = vscode.window.activeTextEditor.document;
+    const decorationOptions: vscode.DecorationOptions[] = [];
+    for (let i = 0; i < doc.lineCount; i++) {
+       {
+        let lineText = doc.lineAt(i);
+        let line = lineText.text;    
+        let startPos = new vscode.Position(i, 0);
+        let endPos = new vscode.Position(i, 0 +  line.length );
+        const decoration = { range: new vscode.Range(startPos, endPos)};
+        decorationOptions.push(decoration);
+        }
+        vscode.window.activeTextEditor.setDecorations(trailingSpacesDecorationType, decorationOptions);
+    }
+}
 class masterController {
 
     private _editManager: editManager;
@@ -140,8 +160,9 @@ class masterController {
     dispose() {
         this._disposable.dispose();
     }
-
+    
     private _onEvent() {
+        
         //console.log("Key Presses");
         //Remember to set it true during initailization
         if(SessionVariables.I_AM_SERVER){
@@ -161,6 +182,7 @@ class masterController {
 
         }
         else{
+             updateDecorations();
             //TODO
             var message = em.getText();
         client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
@@ -170,7 +192,7 @@ class masterController {
         });
         // Display a message box to the user
         vscode.window.showInformationMessage('Send from Client');
-            
+       
         }
     }
 }

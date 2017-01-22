@@ -11,6 +11,7 @@ import {SessionVariables} from './Constants'
     let em :editManager= new editManager();
     var PORT = 33333;
     var HOST = '127.0.0.1';
+    var arr = [];
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -41,13 +42,13 @@ export function activate(context: vscode.ExtensionContext) {
 
         server.on('listening', function () {
             var address = server.address();
-            console.log('UDP Server listening on ' + address.address + ":" + address.port);
+      //      console.log('UDP Server listening on ' + address.address + ":" + address.port);
         });
 
         server.on('message', function (message: string, remote) {
-            console.log(remote.address + ':' + remote.port +' - ' + message);
+         //   console.log(remote.address + ':' + remote.port +' - ' + message);
             rinfo = remote;
-            console.log(rinfo.port+' '+rinfo.address);
+           // console.log(rinfo.port+' '+rinfo.address);
             em.setText(message+"");
         });
          server.bind(PORT, HOST); 
@@ -60,10 +61,10 @@ export function activate(context: vscode.ExtensionContext) {
     let disposableServerSend = vscode.commands.registerCommand('extension.serversend', () => {
         // The code you place here will be executed every time your command is executed
        let ack:string=em.getText();
-       console.log(rinfo.port);
+       //console.log(rinfo.port);
         server.send(ack, 0, ack.length, rinfo.port, rinfo.address, function(err, bytes) {
             if (err) throw err;
-            console.log('UDP message sent to ' + rinfo.address +':'+ rinfo.port);
+        //    console.log('UDP message sent to ' + rinfo.address +':'+ rinfo.port);
             //client.close();
         });  
        
@@ -82,7 +83,12 @@ export function activate(context: vscode.ExtensionContext) {
             console.log(remote.address + ':' + remote.port +' - ' + message);
             rinfo = remote;
             let em: editManager = new editManager();
-            em.setText(message+"");
+            var pos = message.indexOf('|');
+            var num = message.slice(0,pos);
+            console.log(num);
+            arr = arr.concat(num);
+            console.log(arr);
+            em.setText(message.slice(pos+1,message.length)+"");
         });
       
         // Display a message box to the user
@@ -93,7 +99,7 @@ export function activate(context: vscode.ExtensionContext) {
         var message = em.getText();
         client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
             if (err) throw err;
-            console.log('UDP message sent to ' + HOST +':'+ PORT);
+          //  console.log('UDP message sent to ' + HOST +':'+ PORT);
             //client.close();
         });
         // Display a message box to the user
@@ -136,15 +142,17 @@ class masterController {
     }
 
     private _onEvent() {
-        console.log("Key Presses");
+        //console.log("Key Presses");
         //Remember to set it true during initailization
         if(SessionVariables.I_AM_SERVER){
             //TODO
-             let ack:string=em.getText();
-       console.log(rinfo.port);
+            var pos = vscode.window.activeTextEditor.selection.active.line;
+             let ack:string=pos+'|'+em.getText();
+             
+      // console.log(rinfo.port);
         server.send(ack, 0, ack.length, rinfo.port, rinfo.address, function(err, bytes) {
             if (err) throw err;
-            console.log('UDP message sent to ' + rinfo.address +':'+ rinfo.port);
+        //    console.log('UDP message sent to ' + rinfo.address +':'+ rinfo.port);
             //client.close();
         });  
        
@@ -157,7 +165,7 @@ class masterController {
             var message = em.getText();
         client.send(message, 0, message.length, PORT, HOST, function(err, bytes) {
             if (err) throw err;
-            console.log('UDP message sent to ' + HOST +':'+ PORT);
+          //  console.log('UDP message sent to ' + HOST +':'+ PORT);
             //client.close();
         });
         // Display a message box to the user

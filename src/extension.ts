@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
         // The code you place here will be executed every time your command is executed
        
         // Display a message box to the user
-        vscode.window.showInformationMessage('Hello World!');
+     //   vscode.window.showInformationMessage('Hello World!');
        
     });
     let disposableServer = vscode.commands.registerCommand('extension.server', () => {
@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
         });  
        
         // Display a message box to the user
-        vscode.window.showInformationMessage('Sending from server!');
+      //  vscode.window.showInformationMessage('Sending from server!');
        
     });
     let disposableClient = vscode.commands.registerCommand('extension.client', () => {
@@ -103,7 +103,7 @@ export function activate(context: vscode.ExtensionContext) {
             //client.close();
         });
         // Display a message box to the user
-        vscode.window.showInformationMessage('Send from Client');
+      //  vscode.window.showInformationMessage('Send from Client');
        
     });
     context.subscriptions.push(disposable);
@@ -183,7 +183,7 @@ class masterController {
         });  
        
         // Display a message box to the user
-        vscode.window.showInformationMessage('Sending from server!');
+    //    vscode.window.showInformationMessage('Sending from server!');
 
         }
         else{
@@ -196,7 +196,7 @@ class masterController {
             //client.close();
         });
         // Display a message box to the user
-        vscode.window.showInformationMessage('Send from Client');
+     //   vscode.window.showInformationMessage('Send from Client');
        
         }
     }

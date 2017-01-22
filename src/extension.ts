@@ -125,8 +125,10 @@ function updateDecorations() {
     const doc = vscode.window.activeTextEditor.document;
     const decorationOptions: vscode.DecorationOptions[] = [];
     for (let i = 0; i < doc.lineCount; i++) {
-       if(i<arr.length && arr.find(myObj => myObj === i) === true ){
-        let lineText = doc.lineAt(i);
+     {
+         for (let j = 0; j < arr.length; j++){
+             if(i==arr[j]){
+                 let lineText = doc.lineAt(i);
         let line = lineText.text;    
         let startPos = new vscode.Position(i, 0);
         let endPos = new vscode.Position(i, 0 +  line.length );
@@ -134,6 +136,9 @@ function updateDecorations() {
         decorationOptions.push(decoration);
         }
         vscode.window.activeTextEditor.setDecorations(trailingSpacesDecorationType, decorationOptions);
+             }
+         }
+       
     }
 }
 class masterController {

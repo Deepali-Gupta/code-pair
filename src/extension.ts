@@ -125,7 +125,7 @@ function updateDecorations() {
     const doc = vscode.window.activeTextEditor.document;
     const decorationOptions: vscode.DecorationOptions[] = [];
     for (let i = 0; i < doc.lineCount; i++) {
-       {
+       if(i<arr.length && arr.find(myObj => myObj === i) === true ){
         let lineText = doc.lineAt(i);
         let line = lineText.text;    
         let startPos = new vscode.Position(i, 0);

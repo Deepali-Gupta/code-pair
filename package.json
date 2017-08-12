@@ -1,9 +1,9 @@
 {
     "name": "codepair",
     "displayName": "CodePair",
-    "description": "an extension for pair programming",
+    "description": "an extension for paired programming",
     "version": "0.0.1",
-    "publisher": "turbo",
+    "publisher": "Deepali",
     "engines": {
         "vscode": "^1.5.0"
     },
